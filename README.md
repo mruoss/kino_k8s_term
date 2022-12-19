@@ -1,21 +1,50 @@
-# KinoK8sTerm
+# KinoK8sTerm - A Livebook Kino to run a Terminal for Kubernetes Pods
 
-**TODO: Add description**
+[![Run in Livebook](https://livebook.dev/badge/v1/pink.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmruoss%2Fkino_k8s_term%2Fblob%2Fmain%2FREADME.md)
+
+## About
+
+This Kino uses the Elixir library [k8s](https://github.com/coryodaniel/k8s) to open a connection to a pod and uses [Xterm.js](http://xtermjs.org/) to render a terminal in your livebook. Refer to these projects for inside information.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `kino_k8s_term` to your list of dependencies in `mix.exs`:
+This Kino is currently not published on hex.pm. You can use it if you install it
+from git:
 
 ```elixir
-def deps do
-  [
-    {:kino_k8s_term, "~> 0.1.0"}
-  ]
-end
+Mix.install([
+  {:kino_k8s_term, git: "git@github.com:mruoss/kino_k8s_term.git", branch: "main"}
+])
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/kino_k8s_term>.
+## Usage
 
+To open a terminal, call `KinoK8sTerm.open/4`. Arguments:
+
+- `conn` - a `%K8s.Conn{}` struct that can be optained by calling `K8s.Conn.from_file/2`
+- `namespace` - The namespace your pod runs in
+- `pod` - The name of your pod
+
+### Options
+
+- `container` - If your pod runs multiple containers, define the container you want to connect to.
+- `command` - optional. The shell that is executed once connected. Defaults to `/bin/sh`.
+
+```elixir
+{:ok, conn} = K8s.Conn.from_file("~/.kube/config", context: "some_local_cluster")
+# For local clusters, you might want to skip TLS verification
+conn = struct!(conn, insecure_skip_tls_verify: true)
+
+namespace = "default"
+pod = "nginx-deployment-6595874d85-5kdf4"
+container = "nginx"
+command = "/bin/bash"
+
+KinoK8sTerm.open(conn, namespace, pod, container: container, command: command)
+```
+
+## Security
+
+Note that the user defined in the `conn` object needs permissions to the `pods/exec` resource in your cluster. If this is not given, the terminal can't be opened.
+
+Use this Kino for local clusters only. Or protect your livebook well from unwanted access.
