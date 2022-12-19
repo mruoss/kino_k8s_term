@@ -4,14 +4,13 @@
 
 ## About
 
-This Kino uses the Elixir library [k8s](https://github.com/coryodaniel/k8s) to open a connection to a pod and uses [Xterm.js](http://xtermjs.org/) to render a terminal in your livebook. Refer to these projects for inside information.
+This Kino uses the Elixir library [k8s](https://github.com/coryodaniel/k8s) to open a connection to a pod and [Xterm.js](http://xtermjs.org/) to render a terminal in your livebook. Refer to these projects for inside information.
 
 https://user-images.githubusercontent.com/695307/208457804-614b5a82-9108-4281-b711-df8ac4040be3.mp4
 
 ## Installation
 
-This Kino is currently not published on hex.pm. You can use it if you install it
-from git:
+This Kino is currently not published on hex.pm. To use it, install it from git:
 
 ```elixir
 Mix.install([
