@@ -19,7 +19,9 @@ Mix.install([
 
 ## Usage
 
-To open a terminal, call `KinoK8sTerm.open/4`. Arguments:
+To open a terminal, call `KinoK8sTerm.open/4`.
+
+### Arguments
 
 - `conn` - a `%K8s.Conn{}` struct that can be optained by calling `K8s.Conn.from_file/2`
 - `namespace` - The namespace your pod runs in

@@ -4,8 +4,34 @@ defmodule KinoK8sTerm do
   """
   use Kino.JS, assets_path: "lib/assets/kino_k8s_term"
   use Kino.JS.Live
-  # use Kino.SmartCell, name: "Kubernetes Terminal"
 
+  @doc """
+  Connects to a Kubernetes Pod and opens a Terminal.
+
+  ### Arguments
+
+  - `conn` - a `%K8s.Conn{}` struct that can be optained by calling `K8s.Conn.from_file/2`
+  - `namespace` - The namespace your pod runs in
+  - `pod` - The name of your pod
+
+  ### Options
+
+  - `container` - If your pod runs multiple containers, define the container you want to connect to.
+  - `command` - optional. The shell that is executed once connected. Defaults to `/bin/sh`.
+
+  ### Example
+
+      {:ok, conn} = K8s.Conn.from_file("~/.kube/config", context: "some_local_cluster")
+      # For local clusters, you might want to skip TLS verification
+      conn = struct!(conn, insecure_skip_tls_verify: true)
+
+      namespace = "default"
+      pod = "nginx-deployment-6595874d85-5kdf4"
+      container = "nginx"
+      command = "/bin/bash"
+
+      KinoK8sTerm.open(conn, namespace, pod, container: container, command: command)
+  """
   def open(conn, namespace, pod, opts \\ []) do
     ctx =
       Kino.JS.Live.new(__MODULE__,
@@ -22,12 +48,13 @@ defmodule KinoK8sTerm do
 
   @impl true
   def init(attrs, ctx) do
-    {:ok, assign(ctx, attrs)}
+    {:ok, assign(ctx, Keyword.put(attrs, :buffer, []))}
   end
 
   @impl true
   def handle_connect(ctx) do
-    {:ok, %{}, ctx}
+    buffer = ctx.assigns.buffer |> Enum.reverse() |> IO.iodata_to_binary()
+    {:ok, %{buffer: buffer}, ctx}
   end
 
   @impl true
@@ -48,21 +75,27 @@ defmodule KinoK8sTerm do
 
   @impl true
   def handle_info(:open, ctx) do
-    broadcast_event(ctx, "open-terminal", nil)
     {:noreply, ctx}
   end
 
   def handle_info({:stdout, data}, ctx) do
     broadcast_event(ctx, "print-terminal", data)
-    {:noreply, ctx}
+
+    new_buffer =
+      case String.split(data, "\n") do
+        [chunk] -> [chunk | ctx.assigns.buffer]
+        [_ | tail] -> [List.last(tail)]
+      end
+
+    {:noreply, assign(ctx, buffer: new_buffer)}
   end
 
   def handle_info(:close, ctx) do
     broadcast_event(ctx, "dispose-terminal", nil)
-    {:noreply, assign(ctx, term_pid: nil)}
+    {:noreply, assign(ctx, term_pid: nil, buffer: [])}
   end
 
-  def handle_info(other_msg, ctx) do
+  def handle_info(_other_msg, ctx) do
     {:noreply, ctx}
   end
 

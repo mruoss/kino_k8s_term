@@ -14,7 +14,6 @@ defmodule KinoK8sTerm.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      # mod: {KinoK8sTerm.Application, []},
       extra_applications: [:logger]
     ]
   end
