@@ -14,6 +14,7 @@ defmodule KinoK8sTerm.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
+      mod: {KinoK8sTerm.Application, []},
       extra_applications: [:logger]
     ]
   end
@@ -21,7 +22,7 @@ defmodule KinoK8sTerm.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:k8s, git: "https://github.com/coryodaniel/k8s.git", branch: "develop"},
+      {:k8s, "~> 2.0.0-pre"},
       {:esbuild, "~> 0.5", only: :dev},
       {:kino, "~> 0.8.0"}
     ]

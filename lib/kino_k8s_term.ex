@@ -2,7 +2,7 @@ defmodule KinoK8sTerm do
   @moduledoc """
   Documentation for `KinoK8sTerm`.
   """
-  use Kino.JS, assets_path: "lib/assets/kino_k8s_term"
+  use Kino.JS
   use Kino.JS.Live
 
   @doc """
@@ -103,5 +103,28 @@ defmodule KinoK8sTerm do
   def handle_event("key", key, ctx) do
     send(ctx.assigns.term_pid, {:stdin, key})
     {:noreply, ctx}
+  end
+
+  asset "main.js" do
+    """
+    import "https://cdn.jsdelivr.net/npm/xterm@5.0.0/lib/xterm.min.js";
+
+    export function init(ctx, attrs) {
+      ctx.importCSS("https://cdn.jsdelivr.net/npm/xterm@5.0.0/css/xterm.css");
+
+      ctx.root.innerHTML = `
+        <div id="k8s-terminal">
+          <div class="k8s-xtermjs-container"></div>
+        </div>
+      `;
+
+      const k8s_xterm = new Terminal();
+      k8s_xterm.onKey((key) => ctx.pushEvent("key", key.key));
+      k8s_xterm.open(ctx.root.querySelector(".k8s-xtermjs-container"));
+      ctx.handleEvent("print-terminal", (data) => k8s_xterm.write(data));
+      ctx.handleEvent("dispose-terminal", () => k8s_xterm.dispose());
+      k8s_xterm.write(attrs.buffer);
+    }
+    """
   end
 end

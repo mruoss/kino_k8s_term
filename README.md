@@ -20,7 +20,7 @@ Mix.install([
 
 ## Usage
 
-To open a terminal, call `KinoK8sTerm.open/4`.
+You can either use the Smart Cell or call `KinoK8sTerm.open/4` manually.
 
 ### Arguments
 
