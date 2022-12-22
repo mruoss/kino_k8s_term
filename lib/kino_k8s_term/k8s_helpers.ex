@@ -25,17 +25,4 @@ defmodule KinoK8sTerm.K8sHelpers do
       {:ok, get_in(pod, ["spec", "containers", Access.all(), "name"])}
     end
   end
-
-  def open_connection(conn, namespace, pod, container) do
-    {:ok, stream} =
-      K8s.Client.connect("v1", "pods/exec", [namespace: namespace, name: pod],
-        command: ["/bin/bash"],
-        container: container,
-        tty: true
-      )
-      |> K8s.Client.put_conn(conn)
-      |> K8s.Client.stream()
-
-    stream
-  end
 end
