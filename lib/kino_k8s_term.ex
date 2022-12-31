@@ -59,18 +59,19 @@ defmodule KinoK8sTerm do
 
   @impl true
   def handle_cast(:open_terminal, ctx) do
-    {:ok, pid} =
-      Kino.start_child(
-        {KinoK8sTerm.PodConnector,
-         conn: ctx.assigns.conn,
-         namespace: ctx.assigns.namespace,
-         pod: ctx.assigns.pod,
-         container: ctx.assigns.container,
-         command: ctx.assigns.command,
-         stream_to: self()}
+    {:ok, send_to_websocket} =
+      K8s.Client.connect(
+        "v1",
+        "pods/exec",
+        [namespace: ctx.assigns.namespace, name: ctx.assigns.pod],
+        container: ctx.assigns.container,
+        command: ctx.assigns.command,
+        tty: true
       )
+      |> K8s.Client.put_conn(ctx.assigns.conn)
+      |> K8s.Client.stream_to(self())
 
-    {:noreply, assign(ctx, term_pid: pid)}
+    {:noreply, assign(ctx, send_to_websocket: send_to_websocket)}
   end
 
   @impl true
@@ -90,9 +91,9 @@ defmodule KinoK8sTerm do
     {:noreply, assign(ctx, buffer: new_buffer)}
   end
 
-  def handle_info(:close, ctx) do
+  def handle_info({:close, _}, ctx) do
     broadcast_event(ctx, "dispose-terminal", nil)
-    {:noreply, assign(ctx, term_pid: nil, buffer: [])}
+    {:noreply, assign(ctx, send_to_websocket: nil, buffer: [])}
   end
 
   def handle_info(_other_msg, ctx) do
@@ -101,7 +102,7 @@ defmodule KinoK8sTerm do
 
   @impl true
   def handle_event("key", key, ctx) do
-    send(ctx.assigns.term_pid, {:stdin, key})
+    ctx.assigns.send_to_websocket.({:stdin, key})
     {:noreply, ctx}
   end
 
