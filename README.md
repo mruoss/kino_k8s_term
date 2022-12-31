@@ -1,5 +1,7 @@
 # KinoK8sTerm - A Livebook Kino to run a Terminal for Kubernetes Pods
 
+## Section
+
 [![Run in Livebook](https://livebook.dev/badge/v1/pink.svg)](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmruoss%2Fkino_k8s_term%2Fblob%2Fmain%2FREADME.md)
 
 ## About
@@ -24,14 +26,14 @@ You can either use the Smart Cell or call `KinoK8sTerm.open/4` manually.
 
 ### Arguments
 
-- `conn` - a `%K8s.Conn{}` struct that can be optained by calling `K8s.Conn.from_file/2`
-- `namespace` - The namespace your pod runs in
-- `pod` - The name of your pod
+* `conn` - a `%K8s.Conn{}` struct that can be optained by calling `K8s.Conn.from_file/2`
+* `namespace` - The namespace your pod runs in
+* `pod` - The name of your pod
 
 ### Options
 
-- `container` - If your pod runs multiple containers, define the container you want to connect to.
-- `command` - optional. The shell that is executed once connected. Defaults to `/bin/sh`.
+* `container` - If your pod runs multiple containers, define the container you want to connect to.
+* `command` - optional. The shell that is executed once connected. Defaults to `/bin/sh`.
 
 ```elixir
 {:ok, conn} = K8s.Conn.from_file("~/.kube/config", context: "some_local_cluster")
@@ -44,6 +46,18 @@ container = "nginx"
 command = "/bin/bash"
 
 KinoK8sTerm.open(conn, namespace, pod, container: container, command: command)
+```
+
+## Smart Cell
+
+This Kino comes with a smart cell, too. [Open this README in Livebook](https://livebook.dev/run?url=https%3A%2F%2Fgithub.com%2Fmruoss%2Fkino_k8s_term%2Fblob%2Fmain%2FREADME.md) to see it in action.
+
+<!-- livebook:{"attrs":{},"chunks":null,"kind":"Elixir.KinoK8sTerm.SmartCell","livebook_object":"smart_cell"} -->
+
+```elixir
+IO.puts("Connection could not be established.
+Please configure the connection to the pod and reevaluate the cell.")
+:no_conn
 ```
 
 ## Security
