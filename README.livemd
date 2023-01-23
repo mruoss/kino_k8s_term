@@ -16,7 +16,7 @@ This Kino is currently not published on hex.pm. To use it, install it from git:
 
 ```elixir
 Mix.install([
-  {:kino_k8s_term, git: "git@github.com:mruoss/kino_k8s_term.git", branch: "main"}
+  {:kino_k8s_term, git: "https://github.com/mruoss/kino_k8s_term.git", branch: "main"}
 ])
 ```
 
