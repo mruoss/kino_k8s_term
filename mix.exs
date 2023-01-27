@@ -22,7 +22,7 @@ defmodule KinoK8sTerm.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:k8s, "~> 2.0.0-pre"},
+      {:k8s, "~> 2.0.0"},
       {:esbuild, "~> 0.5", only: :dev},
       {:kino, "~> 0.8.0"}
     ]
