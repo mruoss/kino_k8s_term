@@ -1,6 +1,3 @@
-import "https://unpkg.com/react@18/umd/react.production.min.js";
-import "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js";
-
 const useAttrsState = (ctx, initialAttrs) => {
   const [attrs, setAttrs] = React.useState(initialAttrs);
   const updateAttr = (attrName) => (attrValue) => {
@@ -74,6 +71,7 @@ const App = ({ ctx, initialAttrs }) => {
   const [attrs, updateAttr] = useAttrsState(ctx, initialAttrs);
   return (
     <div className="app">
+      <p className="note">This Kino is deprecated. Use :kino_k8s instead.</p>
       <form>
         <div className="container">
           <div className="root">
@@ -140,10 +138,14 @@ const App = ({ ctx, initialAttrs }) => {
   );
 };
 
-export function init(ctx, attrs) {
-  ctx.importCSS("main.css");
-  ctx.importCSS(
+export async function init(ctx, attrs) {
+  await ctx.importCSS("main.css");
+  await ctx.importCSS(
     "https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"
+  );
+  await ctx.importJS("https://unpkg.com/react@18/umd/react.development.js");
+  await ctx.importJS(
+    "https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"
   );
 
   const root = ReactDOM.createRoot(ctx.root);

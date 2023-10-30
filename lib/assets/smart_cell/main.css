@@ -20,12 +20,23 @@
   --yellow-100: #fff7ec;
   --yellow-600: #ffa83f;
 
+  --red-100: #fbdadb;
   --red-300: #f1a3a6;
+  --red-600: #eb2d33;
 }
 
 p,
 pre {
   margin: 0;
+}
+
+.note {
+  border: solid 1px var(--red-600);
+  border-radius: 0.375rem;
+  background-color: var(--red-100);
+  color: var(--red-600);
+  padding: 1rem;
+  margin-bottom: 1rem;
 }
 
 .container {
