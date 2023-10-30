@@ -1,4 +1,11 @@
-# KinoK8sTerm - A Livebook Kino to run a Terminal for Kubernetes Pods
+# ⚠️ ARCHIVED ⚠️ KinoK8sTerm
+
+> [!IMPORTANT]  
+> This repository is archived. The smart cell is now integrated in the
+> "Connect to Pod" smart cell of [kino_k8s](https://github.com/mruoss/kino_k8s).
+> Check it out!
+
+A Livebook Kino to run a Terminal for Kubernetes Pods.
 
 ## Section
 
